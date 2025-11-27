@@ -92,59 +92,164 @@ if page == "Dashboard":
     st.title("🏨 Hotel Booking Analysis Dashboard")
 
     st.write(
-        "Interactive summary of hotel bookings using the cleaned sample dataset. "
+        "Comprehensive overview of hotel booking patterns, cancellations, and revenue insights. "
         "Use the filters in the sidebar to focus on specific hotels and segments."
     )
 
     # Top KPIs
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("Total bookings", len(df_filt))
+        st.metric("Total bookings", f"{len(df_filt):,}")
     with col2:
         cancel_rate = 100 * df_filt["is_canceled"].mean()
         st.metric("Cancellation rate", f"{cancel_rate:.1f}%")
     with col3:
-        st.metric("Average ADR", f"{df_filt['adr'].mean():.2f}")
+        st.metric("Average ADR", f"${df_filt['adr'].mean():.2f}")
     with col4:
-        st.metric("Average lead time", f"{df_filt['lead_time'].mean():.1f} days")
+        st.metric("Average lead time", f"{df_filt['lead_time'].mean():.0f} days")
 
-    # Plotly combined chart: ADR by month + Bookings by month (subplots)
-    st.subheader("Seasonality overview")
+    # Row 1: Hotel Performance
+    st.subheader("📊 Hotel Performance Overview")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Cancellation by hotel type
+        hotel_cancel = pd.crosstab(df_filt["hotel"], df_filt["is_canceled"], normalize="index") * 100
+        fig = px.bar(x=hotel_cancel.index, y=[hotel_cancel[0], hotel_cancel[1]],
+                     title="Cancellation Rate by Hotel Type", barmode='stack',
+                     labels={'x':'Hotel Type', 'y':'Percentage (%)'},
+                     color_discrete_sequence=['skyblue', 'orange'])
+        fig.update_layout(showlegend=True, legend_title_text='Status', height=350)
+        fig.data[0].name = 'Not Canceled'
+        fig.data[1].name = 'Canceled'
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        # ADR by hotel type
+        hotel_adr = df_filt.groupby("hotel")["adr"].mean()
+        fig = px.bar(x=hotel_adr.index, y=hotel_adr.values,
+                     title="Average Daily Rate by Hotel Type",
+                     labels={'x':'Hotel Type', 'y':'Average ADR ($)'},
+                     color_discrete_sequence=['steelblue', 'orange'])
+        fig.update_traces(text=[f'${v:.2f}' for v in hotel_adr.values], textposition='outside')
+        fig.update_layout(height=350)
+        st.plotly_chart(fig, use_container_width=True)
 
+    # Row 2: Market Segments
+    st.subheader("🎯 Market Segment Analysis")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Top 5 market segments by volume
+        segment_counts = df_filt["market_segment"].value_counts().head(5)
+        fig = px.pie(values=segment_counts.values, names=segment_counts.index,
+                     title="Top 5 Market Segments by Bookings",
+                     color_discrete_sequence=['skyblue', 'orange', 'lightblue', 'steelblue', 'dodgerblue'])
+        fig.update_layout(height=350)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        # Market segment cancellation rates
+        seg_cancel = pd.crosstab(df_filt["market_segment"], df_filt["is_canceled"], normalize="index") * 100
+        fig = px.bar(x=seg_cancel.index, y=seg_cancel[1],
+                     title="Cancellation Rate by Market Segment",
+                     labels={'x':'Market Segment', 'y':'Cancellation Rate (%)'},
+                     color_discrete_sequence=['orange'])
+        fig.update_traces(text=[f"{v:.1f}%" for v in seg_cancel[1]], textposition='outside')
+        fig.update_layout(height=350)
+        st.plotly_chart(fig, use_container_width=True)
+
+    # Row 3: Seasonality Trends
+    st.subheader("📅 Seasonality Trends")
     month_order = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ]
-    # Summary by month
+    
     adr_month = df_filt.groupby("arrival_date_month")["adr"].mean().reindex(month_order)
     cnt_month = df_filt["arrival_date_month"].value_counts().reindex(month_order)
 
     fig = make_subplots(
         rows=2, cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.05,
-        subplot_titles=("Average ADR by Month", "Total Bookings by Month")
+        vertical_spacing=0.08,
+        subplot_titles=("Average Daily Rate by Month", "Total Bookings by Month")
     )
 
     fig.add_trace(
-        px.line(x=adr_month.index, y=adr_month.values).data[0],
+        px.line(x=adr_month.index, y=adr_month.values, color_discrete_sequence=['steelblue']).data[0],
         row=1, col=1
     )
     fig.add_trace(
-        px.bar(x=cnt_month.index, y=cnt_month.values).data[0],
+        px.bar(x=cnt_month.index, y=cnt_month.values, color_discrete_sequence=['orange']).data[0],
         row=2, col=1
     )
 
-    fig.update_yaxes(title_text="ADR", row=1, col=1)
+    fig.update_yaxes(title_text="ADR ($)", row=1, col=1)
     fig.update_yaxes(title_text="Bookings", row=2, col=1)
     fig.update_xaxes(title_text="Month", row=2, col=1)
-    fig.update_layout(height=600, showlegend=False)
+    fig.update_layout(height=500, showlegend=False)
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # Quick snapshot table
-    st.subheader("Sample of filtered data")
-    st.dataframe(df_filt.head(50))
+    # Row 4: Distribution Channels
+    st.subheader("📢 Distribution Channel Performance")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Channel volume
+        channel_counts = df_filt["distribution_channel"].value_counts()
+        fig = px.bar(x=channel_counts.index, y=channel_counts.values,
+                     title="Bookings by Distribution Channel",
+                     labels={'x':'Channel', 'y':'Number of Bookings'},
+                     color_discrete_sequence=['skyblue'])
+        fig.update_traces(text=channel_counts.values, textposition='outside')
+        fig.update_layout(height=350)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        # Channel ADR
+        channel_adr = df_filt.groupby("distribution_channel")["adr"].mean()
+        fig = px.bar(x=channel_adr.index, y=channel_adr.values,
+                     title="Average ADR by Distribution Channel",
+                     labels={'x':'Channel', 'y':'Average ADR ($)'},
+                     color_discrete_sequence=['orange'])
+        fig.update_traces(text=[f'${v:.2f}' for v in channel_adr.values], textposition='outside')
+        fig.update_layout(height=350)
+        st.plotly_chart(fig, use_container_width=True)
+
+    # Row 5: Guest Insights
+    st.subheader("👥 Guest Behavior Insights")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        # Lead time distribution
+        fig = px.histogram(df_filt, x="lead_time", nbins=30,
+                          title="Lead Time Distribution",
+                          labels={'lead_time':'Lead Time (days)'},
+                          color_discrete_sequence=['steelblue'])
+        fig.update_layout(height=300, showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        # Customer type distribution
+        cust_counts = df_filt["customer_type"].value_counts()
+        fig = px.pie(values=cust_counts.values, names=cust_counts.index,
+                     title="Customer Type Distribution",
+                     color_discrete_sequence=['skyblue', 'orange', 'lightblue', 'steelblue'])
+        fig.update_layout(height=300)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col3:
+        # Special requests impact
+        req_stats = df_filt.groupby("total_of_special_requests")["is_canceled"].mean() * 100
+        req_stats = req_stats[req_stats.index <= 4]  # Limit to 0-4 requests
+        fig = px.line(x=req_stats.index, y=req_stats.values, markers=True,
+                     title="Cancellation Rate vs Special Requests",
+                     labels={'x':'Special Requests', 'y':'Cancellation Rate (%)'},
+                     color_discrete_sequence=['orange'])
+        fig.update_layout(height=300, showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
 
 # ========== KEY FINDINGS PAGE ==========
 elif page == "Key Findings":
