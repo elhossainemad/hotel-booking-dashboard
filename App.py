@@ -485,6 +485,18 @@ elif page == "Bivariate Analysis":
         st.plotly_chart(fig, use_container_width=True)
         st.caption("✓ Number of children does not affect cancellation rates")
 
+    with st.expander("Q8) Are guests with more special requests less likely to cancel?"):
+        req_cancel = pd.crosstab(
+            df_filt["total_of_special_requests"], df_filt["is_canceled"],
+            normalize="index"
+        ) * 100
+        fig = px.line(x=req_cancel.index, y=req_cancel[1], markers=True,
+                     title="Cancellation Rate vs Special Requests",
+                     labels={'x':'Total Special Requests', 'y':'Cancellation Rate (%)'},
+                     color_discrete_sequence=['orange'])
+        st.plotly_chart(fig, use_container_width=True)
+        st.caption("✓ Guests with 3+ requests cancel 75% less - strong commitment signal")
+
     with st.expander("Q23) Do cancellations vary by month (seasonality)?"):
         month_order = [
             "January", "February", "March", "April", "May", "June",
@@ -529,18 +541,6 @@ elif page == "Bivariate Analysis":
         fig.update_traces(text=[f"{v:.1f}" for v in channel_adr.values], textposition='outside')
         st.plotly_chart(fig, use_container_width=True)
         st.caption("✓ GDS channel pays premium rates - best revenue per booking")
-
-    with st.expander("Q8) Are guests with more special requests less likely to cancel?"):
-        req_cancel = pd.crosstab(
-            df_filt["total_of_special_requests"], df_filt["is_canceled"],
-            normalize="index"
-        ) * 100
-        fig = px.line(x=req_cancel.index, y=req_cancel[1], markers=True,
-                     title="Cancellation Rate vs Special Requests",
-                     labels={'x':'Total Special Requests', 'y':'Cancellation Rate (%)'},
-                     color_discrete_sequence=['orange'])
-        st.plotly_chart(fig, use_container_width=True)
-        st.caption("✓ Guests with 3+ requests cancel 75% less - strong commitment signal")
 
     with st.expander("Q9) Does the number of adults in a booking affect the price (ADR)?"):
         adults_adr = df_filt.groupby("adults")["adr"].mean()
