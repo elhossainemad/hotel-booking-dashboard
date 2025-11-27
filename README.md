@@ -107,18 +107,10 @@ hotel-booking-dashboard/
 - 6 pricing pattern insights
 - 5 actionable recommendations for hotel management
 
-## 🤝 Contributing
-
-This project was developed as part of a data analysis initiative. Contributions, issues, and feature requests are welcome!
-
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
 ## 🙏 Acknowledgments
 
 - Dataset sourced from hotel booking records
-- Built with guidance from **[Epsilon AI](https://github.com/epsilon-ai)** - Advanced AI assistant for data analysis and development
+- Course provided by **[Epsilon AI](https://github.com/epsilon-ai)**
 - Streamlit community for excellent documentation
 
 ## 📧 Contact
