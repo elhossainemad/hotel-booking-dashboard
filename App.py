@@ -43,6 +43,8 @@ def load_data():
 
 df = load_data()
 
+# Sidebar filters and navigation
+import os
 st.sidebar.image("istockphoto-104731717-612x612.jpg", use_container_width=True, caption="Hotel Booking Analysis")
 
 st.sidebar.header("Filters")
@@ -94,12 +96,8 @@ if page == "Dashboard":
         "Use the filters in the sidebar to focus on specific hotels and segments."
     )
 
-    # Create tabs for Dashboard and Raw Data
-    tab1, tab2 = st.tabs(["📈 Analytics", "📄 Raw Data"])
-    
-    with tab1:
-        # Top KPIs
-        col1, col2, col3, col4 = st.columns(4)
+    # Top KPIs
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.metric("Total bookings", f"{len(df_filt):,}")
     with col2:
@@ -370,46 +368,6 @@ elif page == "Univariate Analysis":
         fig.update_traces(text=deposit_counts.values, textposition='outside')
         st.plotly_chart(fig, use_container_width=True)
         st.caption("✓ 87% of bookings require no upfront deposit")
-
-    with tab2:
-        st.subheader("📄 Raw Data View")
-        
-        # Dataset selection
-        dataset_choice = st.radio(
-            "Select dataset:",
-            ["Cleaned Sample (12K)", "Raw Data (119K)"],
-            horizontal=True
-        )
-        
-        if dataset_choice == "Cleaned Sample (12K)":
-            st.info("Cleaned and sampled dataset used in dashboard (12,000 records)")
-            st.dataframe(df, use_container_width=True, height=400)
-            
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Records", f"{len(df):,}")
-            with col2:
-                st.metric("Columns", len(df.columns))
-            with col3:
-                st.metric("Memory", f"{df.memory_usage(deep=True).sum() / 1024**2:.1f} MB")
-        
-        else:
-            st.info("Original unprocessed dataset (119,390 records)")
-            
-            @st.cache_data
-            def load_raw_data():
-                return pd.read_csv("hotel_bookings_raw.csv")
-            
-            df_raw = load_raw_data()
-            st.dataframe(df_raw, use_container_width=True, height=400)
-            
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Records", f"{len(df_raw):,}")
-            with col2:
-                st.metric("Columns", len(df_raw.columns))
-            with col3:
-                st.metric("Memory", f"{df_raw.memory_usage(deep=True).sum() / 1024**2:.1f} MB")
 
 # ========== BIVARIATE ANALYSIS PAGE ==========
 elif page == "Bivariate Analysis":
@@ -696,5 +654,3 @@ elif page == "Bivariate Analysis":
                      color_discrete_sequence=['dodgerblue'])
         st.plotly_chart(fig, use_container_width=True)
         st.caption("✓ Summer vacations planned 4 months ahead - winter trips booked last-minute")
-
-
