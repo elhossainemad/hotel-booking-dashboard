@@ -399,6 +399,13 @@ elif page == "Bivariate Analysis":
         st.plotly_chart(fig, use_container_width=True)
         st.caption("✓ Bookings made far in advance are canceled more often")
 
+    with st.expander("Q3) Do canceled bookings have different ADR patterns than non-canceled bookings?"):
+        fig = px.box(df_filt, x="is_canceled", y="adr", title="ADR by Cancellation Status",
+                    labels={'is_canceled':'Canceled', 'adr':'ADR'},
+                    color_discrete_sequence=['orange'])
+        st.plotly_chart(fig, use_container_width=True)
+        st.caption("✓ Price does not strongly influence cancellation decisions")
+
     with st.expander("Q4) Do guests who modify their bookings tend to cancel more?"):
         avg_changes = df_filt.groupby("is_canceled")["booking_changes"].mean()
         fig = px.bar(x=["Not canceled", "Canceled"], y=avg_changes.values,
@@ -418,6 +425,18 @@ elif page == "Bivariate Analysis":
         fig.update_traces(text=[f"{v:.1f}%" for v in deposit_ct[1]], textposition='outside')
         st.plotly_chart(fig, use_container_width=True)
         st.caption("⚠️ Non-refundable deposits have 99% cancellation - major policy issue")
+
+    with st.expander("Q8) Are guests with more special requests less likely to cancel?"):
+        req_cancel = pd.crosstab(
+            df_filt["total_of_special_requests"], df_filt["is_canceled"],
+            normalize="index"
+        ) * 100
+        fig = px.line(x=req_cancel.index, y=req_cancel[1], markers=True,
+                     title="Cancellation Rate vs Special Requests",
+                     labels={'x':'Total Special Requests', 'y':'Cancellation Rate (%)'},
+                     color_discrete_sequence=['orange'])
+        st.plotly_chart(fig, use_container_width=True)
+        st.caption("✓ Guests with 3+ requests cancel 75% less - strong commitment signal")
 
     with st.expander("Q11) Do different market segments have different cancellation rates?"):
         seg_cancel = pd.crosstab(
@@ -485,18 +504,6 @@ elif page == "Bivariate Analysis":
         st.plotly_chart(fig, use_container_width=True)
         st.caption("✓ Number of children does not affect cancellation rates")
 
-    with st.expander("Q8) Are guests with more special requests less likely to cancel?"):
-        req_cancel = pd.crosstab(
-            df_filt["total_of_special_requests"], df_filt["is_canceled"],
-            normalize="index"
-        ) * 100
-        fig = px.line(x=req_cancel.index, y=req_cancel[1], markers=True,
-                     title="Cancellation Rate vs Special Requests",
-                     labels={'x':'Total Special Requests', 'y':'Cancellation Rate (%)'},
-                     color_discrete_sequence=['orange'])
-        st.plotly_chart(fig, use_container_width=True)
-        st.caption("✓ Guests with 3+ requests cancel 75% less - strong commitment signal")
-
     with st.expander("Q23) Do cancellations vary by month (seasonality)?"):
         month_order = [
             "January", "February", "March", "April", "May", "June",
@@ -515,13 +522,6 @@ elif page == "Bivariate Analysis":
 
     # Pricing and revenue questions
     st.header("Price (ADR) behaviour")
-
-    with st.expander("Q3) Do canceled bookings have different ADR patterns than non-canceled bookings?"):
-        fig = px.box(df_filt, x="is_canceled", y="adr", title="ADR by Cancellation Status",
-                     labels={'is_canceled':'Canceled', 'adr':'ADR'},
-                     color_discrete_sequence=['orange'])
-        st.plotly_chart(fig, use_container_width=True)
-        st.caption("✓ Price does not strongly influence cancellation decisions")
 
     with st.expander("Q6) Do different market segments produce different lead times?"):
         market_lead = df_filt.groupby("market_segment")["lead_time"].mean().sort_values()
