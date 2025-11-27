@@ -14,6 +14,10 @@ An interactive Streamlit dashboard for analyzing hotel booking patterns, cancell
 
 This dashboard provides comprehensive analysis of 12,000 hotel booking records, helping hotel management make data-driven decisions to reduce cancellations and optimize revenue.
 
+The project includes:
+- **Interactive Streamlit Dashboard**: Live web application with 11 visualizations
+- **Complete EDA Notebook**: Jupyter notebook with full exploratory data analysis, including univariate and bivariate analysis for all 26 business questions
+
 ### Key Features
 
 - **Interactive Visualizations**: 30+ Plotly charts with hover details
@@ -67,6 +71,7 @@ Open your browser and navigate to `http://localhost:8501`
 ```
 hotel-booking-dashboard/
 ├── App.py                          # Main Streamlit application
+├── Analysis_Notebook.ipynb         # Complete EDA Jupyter Notebook
 ├── cleaned_hotel_sample.csv        # Dataset (12,000 booking records)
 ├── istockphoto-104731717-612x612.jpg  # Banner image
 ├── requirements.txt                # Python dependencies
