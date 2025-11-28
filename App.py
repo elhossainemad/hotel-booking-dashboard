@@ -371,13 +371,13 @@ elif page == "Univariate Analysis":
 
 # ========== BIVARIATE ANALYSIS PAGE ==========
 elif page == "Bivariate Analysis":
-    st.title("📖 The Story Behind Hotel Bookings")
+    st.title("The Story Behind Hotel Bookings")
     st.write("Uncovering the hidden patterns that drive cancellations, pricing, and guest behavior")
     
     st.markdown("---")
     
     # Story Arc 1: The Cancellation Crisis
-    st.header("🚨 Chapter 1: Understanding the Cancellation Crisis")
+    st.header("Understanding the Cancellation Crisis")
     st.write("Not all bookings are created equal. Let's explore what makes guests walk away.")
     
     # Hotel type comparison
@@ -398,7 +398,7 @@ elif page == "Bivariate Analysis":
     with col2:
         st.metric("City Hotel Cancellations", "42%", delta="-14% vs Resort", delta_color="inverse")
         st.metric("Resort Hotel Cancellations", "28%")
-        st.info("💡 City bookings are more volatile - likely business travelers with changing plans")
+        st.info("City bookings are more volatile - likely business travelers with changing plans")
     
     # Lead time impact
     st.subheader("The Time Paradox: Book Early, Cancel Often")
@@ -411,10 +411,10 @@ elif page == "Bivariate Analysis":
                         color_discrete_sequence=['orange'])
         st.plotly_chart(fig, use_container_width=True)
     with col2:
-        st.warning("⏰ **Insight**: Guests who book months ahead are actually more likely to cancel. Early bookings = higher uncertainty.")
+        st.warning("**Insight**: Guests who book months ahead are actually more likely to cancel. Early bookings = higher uncertainty.")
     
     # The deposit disaster
-    st.subheader("⚠️ The Non-Refundable Deposit Disaster")
+    st.subheader("The Non-Refundable Deposit Disaster")
     col1, col2 = st.columns([2, 1])
     with col1:
         deposit_ct = pd.crosstab(
@@ -426,11 +426,11 @@ elif page == "Bivariate Analysis":
         fig.update_traces(text=[f"{v:.1f}%" for v in deposit_ct[1]], textposition='outside')
         st.plotly_chart(fig, use_container_width=True)
     with col2:
-        st.error("🔥 **CRITICAL**: Non-refundable deposits have a 99% cancellation rate! This policy is completely broken.")
-        st.success("✅ No deposit bookings: Only 35% cancel")
+        st.error("**CRITICAL**: Non-refundable deposits have a 99% cancellation rate! This policy is completely broken.")
+        st.success("No deposit bookings: Only 35% cancel")
     
     # Special requests = commitment
-    st.subheader("💬 The Commitment Signal: Special Requests")
+    st.subheader("The Commitment Signal: Special Requests")
     col1, col2 = st.columns([2, 1])
     with col1:
         req_cancel = pd.crosstab(
@@ -443,11 +443,11 @@ elif page == "Bivariate Analysis":
                      color_discrete_sequence=['#3498db'])
         st.plotly_chart(fig, use_container_width=True)
     with col2:
-        st.success("🎯 **Game Changer**: Guests with 3+ requests cancel 75% less!")
+        st.success("**Game Changer**: Guests with 3+ requests cancel 75% less!")
         st.info("Engaged guests = committed guests")
     
     # Market segment story
-    st.subheader("📊 Who Cancels the Most?")
+    st.subheader("Who Cancels the Most?")
     col1, col2 = st.columns(2)
     with col1:
         seg_cancel = pd.crosstab(
@@ -468,10 +468,10 @@ elif page == "Bivariate Analysis":
         fig.update_traces(text=[f"{v:.1f}%" for v in cust_cancel[1]], textposition='outside')
         st.plotly_chart(fig, use_container_width=True)
     
-    st.warning("⚡ **Key Finding**: Group bookings have 63% cancellation despite booking 187 days ahead!")
+    st.warning("**Key Finding**: Group bookings have 63% cancellation despite booking 187 days ahead!")
     
     # Channel comparison
-    st.subheader("🌐 Distribution Channel Impact")
+    st.subheader("Distribution Channel Impact")
     col1, col2 = st.columns([2, 1])
     with col1:
         dist_cancel = pd.crosstab(
@@ -485,7 +485,7 @@ elif page == "Bivariate Analysis":
     with col2:
         st.metric("Online Channels (TA/TO)", "42%", delta="+25% vs Direct", delta_color="inverse")
         st.metric("Direct Bookings", "17%")
-        st.success("💎 Direct bookings are 2.5x more reliable!")
+        st.success("Direct bookings are 2.5x more reliable!")
     
     # Additional cancellation factors
     col1, col2 = st.columns(2)
@@ -513,16 +513,16 @@ elif page == "Bivariate Analysis":
                      color_discrete_sequence=['#1abc9c'])
         st.plotly_chart(fig, use_container_width=True)
     
-    st.info("📅 June shows peak cancellations - early summer uncertainty affects booking reliability")
+    st.info("June shows peak cancellations - early summer uncertainty affects booking reliability")
     
     st.markdown("---")
     
     # Story Arc 2: The Pricing Strategy
-    st.header("💰 Chapter 2: The Art of Pricing")
+    st.header("The Art of Pricing")
     st.write("How different guests pay different prices - and why it matters.")
     
     # Seasonal pricing
-    st.subheader("🌞 The Summer Premium")
+    st.subheader("The Summer Premium")
     col1, col2 = st.columns([2, 1])
     with col1:
         month_order = [
@@ -538,10 +538,10 @@ elif page == "Bivariate Analysis":
     with col2:
         st.metric("August Peak Price", f"${adr_by_month.max():.0f}")
         st.metric("Lowest Price", f"${adr_by_month.min():.0f}", delta=f"-{((adr_by_month.max()-adr_by_month.min())/adr_by_month.min()*100):.0f}%")
-        st.success("☀️ Summer pricing power: 40% premium over off-season")
+        st.success("Summer pricing power: 40% premium over off-season")
     
     # Channel pricing
-    st.subheader("💳 Who Pays the Most?")
+    st.subheader("Who Pays the Most?")
     col1, col2 = st.columns(2)
     with col1:
         channel_adr = df_filt.groupby("distribution_channel")["adr"].mean()
@@ -559,10 +559,10 @@ elif page == "Bivariate Analysis":
         fig.update_traces(text=[f"${v:.0f}" for v in segment_adr.values], textposition='outside')
         st.plotly_chart(fig, use_container_width=True)
     
-    st.info("💡 GDS and Direct channels pay premium rates - opportunity for strategic pricing!")
+    st.info("GDS and Direct channels pay premium rates - opportunity for strategic pricing!")
     
     # Room type pricing
-    st.subheader("🏨 Room Tier Economics")
+    st.subheader("Room Tier Economics")
     col1, col2 = st.columns([2, 1])
     with col1:
         room_adr = df_filt.groupby("reserved_room_type")["adr"].mean().sort_values()
@@ -574,10 +574,10 @@ elif page == "Bivariate Analysis":
     with col2:
         st.metric("Premium Rooms (F/G/H)", f"${room_adr.tail(3).mean():.0f}")
         st.metric("Standard Rooms", f"${room_adr.head(3).mean():.0f}")
-        st.success("🎯 Clear tier differentiation - premium rooms charge 2x standard rates")
+        st.success("Clear tier differentiation - premium rooms charge 2x standard rates")
     
     # Booking patterns
-    st.subheader("📅 The Planning Horizon")
+    st.subheader("The Planning Horizon")
     col1, col2 = st.columns(2)
     with col1:
         market_lead = df_filt.groupby("market_segment")["lead_time"].mean().sort_values(ascending=False)
@@ -595,10 +595,10 @@ elif page == "Bivariate Analysis":
         fig.update_traces(text=book_count.values, textposition='outside')
         st.plotly_chart(fig, use_container_width=True)
     
-    st.warning("⏳ Group travelers book 187 days ahead but cancel 63% - high risk segment!")
+    st.warning("Group travelers book 187 days ahead but cancel 63% - high risk segment!")
     
     # Price vs cancellation
-    st.subheader("💸 Does Higher Price = Higher Risk?")
+    st.subheader("Does Higher Price = Higher Risk?")
     col1, col2 = st.columns([2, 1])
     with col1:
         adr_cancel = pd.crosstab(
@@ -610,14 +610,14 @@ elif page == "Bivariate Analysis":
         fig.update_traces(text=[f"{v:.1f}%" for v in adr_cancel[1]], textposition='outside')
         st.plotly_chart(fig, use_container_width=True)
     with col2:
-        st.info("💭 **Insight**: Premium bookings ($150+) cancel slightly more, but price isn't the main driver")
+        st.info("**Insight**: Premium bookings ($150+) cancel slightly more, but price isn't the main driver")
         fig = px.box(df_filt, x="is_canceled", y="adr", title="Price Distribution",
                      labels={'is_canceled':'Canceled', 'adr':'ADR'},
                      color_discrete_sequence=['#34495e'])
         st.plotly_chart(fig, use_container_width=True)
     
     # Loyalty check
-    st.subheader("🔄 Do We Reward Loyalty?")
+    st.subheader("Do We Reward Loyalty?")
     col1, col2 = st.columns([2, 1])
     with col1:
         fig = px.box(df_filt, x="is_repeated_guest", y="adr", title="New Guests vs Returning Guests",
@@ -629,4 +629,4 @@ elif page == "Bivariate Analysis":
         repeat_guest_adr = df_filt[df_filt["is_repeated_guest"]==1]["adr"].median()
         st.metric("New Guests (Median)", f"${new_guest_adr:.0f}")
         st.metric("Repeat Guests (Median)", f"${repeat_guest_adr:.0f}", delta=f"${repeat_guest_adr-new_guest_adr:.0f}")
-        st.warning("😕 No loyalty discount - opportunity to incentivize repeat bookings!")
+        st.warning("No loyalty discount - opportunity to incentivize repeat bookings!")
